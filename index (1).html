@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Сад Желаний: три в ряд</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&display=swap">
+<style>
+/* Раскладка: один экран телефона по центру — шапка, дерево со шкалой света, поле 6×6, меню. Мудрость выезжает листом поверх поля. */
+:root{
+  color-scheme:dark;
+  --bg:#070c16; --bg-up:#0f1a2c; --panel:#0d1524; --line:#1e2a3d;
+  --fg:#e8edf5; --muted:#9aa6ba; --dim:#6f7c92;
+  --teal:#58c8d6; --leaf:#5fd3a6; --gold:#f0cf86; --gold-deep:#9c7b3c; --gold-bg:#2a2111;
+  --display:'Lora',Georgia,serif; --text:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--text);font-size:14px;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;justify-content:center;align-items:flex-start}
+.phone{position:relative;width:100%;max-width:400px;min-height:720px;border:1px solid var(--line);border-radius:28px;overflow:hidden;
+  background:radial-gradient(120% 55% at 50% 0%,var(--bg-up) 0%,var(--bg) 70%);padding:18px 16px 92px;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.eyebrow{font-size:11px;letter-spacing:.2em;color:var(--teal);font-weight:600;text-transform:uppercase}
+.bal{font-size:13px;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sub{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:6px}
+.dots i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.dots i.on{background:var(--gold)}
+.treebox{display:flex;justify-content:center}
+.treebox svg{width:190px;height:120px;display:block}
+.meter{height:7px;background:var(--line);border-radius:4px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-deep),var(--gold));transition:width .4s ease}
+.status{min-height:18px;font-size:12.5px;color:var(--muted);text-align:center}
+.status b{color:var(--gold);font-weight:600}
+.grid{position:relative;width:100%;aspect-ratio:1;touch-action:none;user-select:none;-webkit-user-select:none}
+.tile{position:absolute;left:0;top:0;width:calc(100%/6);height:calc(100%/6);padding:3px;transition:transform .22s ease;cursor:pointer}
+.tile>span{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:10px;background:var(--panel);border:1px solid var(--line);transition:transform .18s,opacity .18s,border-color .15s,box-shadow .15s}
+.tile svg{width:58%;height:58%}
+.tile.sel>span{border-color:var(--gold);box-shadow:0 0 12px var(--gold-deep);background:var(--gold-bg)}
+.tile.pop>span{transform:scale(.2);opacity:0}
+.tile.hint>span{animation:hint 1s ease-in-out infinite}
+@keyframes hint{50%{border-color:var(--teal);transform:scale(1.07)}}
+.legend{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--dim)}
+.nav{position:absolute;left:0;right:0;bottom:0;height:78px;display:flex;justify-content:space-around;align-items:flex-end;padding-bottom:12px;
+  background:linear-gradient(transparent,var(--bg) 40%);font-size:9.5px;letter-spacing:.14em;color:var(--dim);pointer-events:none}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:5px}
+.nav i{width:34px;height:34px;border-radius:50%;border:1px solid var(--line)}
+.nav .a{color:var(--teal)} .nav .a i{width:42px;height:42px;border-color:var(--teal);box-shadow:0 0 14px #1b6f7a}
+.sheet{position:absolute;inset:0;background:var(--bg);padding:22px 18px 24px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;z-index:5;animation:rise .35s ease}
+@keyframes rise{from{transform:translateY(24px);opacity:0}}
+.sheet h2{font-family:var(--display);font-weight:600;font-size:24px;color:var(--gold);text-align:center;text-wrap:balance}
+.sheet .lead{color:var(--muted);text-align:center;line-height:1.45}
+.flower{display:flex;justify-content:center}
+.flower svg{width:150px;height:150px}
+.quote{border:1px solid var(--gold-deep);background:linear-gradient(var(--gold-bg),#140f08);border-radius:14px;padding:16px;font-family:var(--display);font-size:18px;line-height:1.42}
+.task{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:13px 14px;display:flex;flex-direction:column;gap:9px}
+.task p{line-height:1.45}
+.opt{display:flex;gap:10px;align-items:center;text-align:left;width:100%;background:none;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:inherit;cursor:pointer}
+.opt::before{content:"";flex:none;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--dim)}
+.opt[aria-pressed="true"]{border-color:var(--teal)}
+.opt[aria-pressed="true"]::before{border-color:var(--teal);background:radial-gradient(var(--teal) 45%,transparent 50%)}
+.btn{width:100%;border:1px solid var(--gold-deep);background:linear-gradient(#3a2e17,var(--gold-bg));border-radius:12px;padding:15px;color:var(--gold);
+  font:600 12.5px var(--text);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,.opt:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.reply{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px;line-height:1.5}
+.reply small{display:block;color:var(--teal);font-size:10.5px;letter-spacing:.16em;margin-bottom:6px}
+.reward{text-align:center;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
+.note{font-size:11.5px;color:var(--dim);text-align:center}
+.stats{display:flex;gap:8px}
+.stats div{flex:1;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 4px;text-align:center;color:var(--muted);font-size:11px}
+.stats b{display:block;font-size:19px;color:var(--gold);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.tile,.tile>span,.meter i{transition:none}.sheet,.tile.hint>span{animation:none}}
+</style>
+
+<div class="phone" id="phone">
+  <div class="top"><span class="eyebrow" id="mode">Сад · утренний ритуал</span><span class="bal">⊙ <span id="iskra">2 150</span></span></div>
+  <div class="dots" id="dots"><i></i><i></i><i></i></div>
+  <div class="sub"><span id="subL">Мудрость 1 из 3</span><span>ходов: <span id="moves">0</span></span></div>
+  <div class="treebox"><svg viewBox="0 0 190 120" id="tree" aria-hidden="true"></svg></div>
+  <div class="meter" role="progressbar" aria-label="Свет дерева" aria-valuemin="0" aria-valuemax="100" id="meterBox"><i id="meter"></i></div>
+  <div class="status" id="status">Собери три в ряд. Солнце даёт дереву больше всего света.</div>
+  <div class="grid" id="grid" aria-label="Игровое поле"></div>
+  <div class="legend"><span>солнце ×3 → свет</span><span>капли и листья → немного света</span><span>искры → ⊙</span></div>
+  <div class="nav" aria-hidden="true"><div class="a"><i></i>ДЕРЕВО</div><div><i></i>КАРТЫ</div><div><i></i>МУДРОСТЬ</div><div><i></i>ЧАТ</div><div><i></i>ПЛОДЫ</div></div>
+</div>
+
+<script>
+const N=6, TYPES=['drop','leaf','sun','spark'];
+const ICON={
+ drop:'<svg viewBox="0 0 24 24"><path d="M12 2.5C8 8 5.5 11.3 5.5 15a6.5 6.5 0 0 0 13 0c0-3.7-2.500-7-6.500-12.500z" fill="#58c8d6"/></svg>',
+ leaf:'<svg viewBox="0 0 24 24"><path d="M4 20C4 9 10 4 21 3c-1 11-6 17-17 17z" fill="#5fd3a6"/><path d="M5 19 16 8" stroke="#0d1524" stroke-width="1.6" fill="none"/></svg>',
+ sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#f0cf86"/><g stroke="#f0cf86" stroke-width="2" stroke-linecap="round"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.900 4.900l2.100 2.100M17 17l2.100 2.100M4.900 19.100 7 17M17 7l2.100-2.100"/></g></svg>',
+ spark:'<svg viewBox="0 0 24 24"><path d="M12 2l2.400 7.600L22 12l-7.600 2.400L12 22l-2.400-7.600L2 12l7.600-2.400z" fill="#e8edf5"/></svg>'
+};
+const WISDOMS=[
+ {card:'Благодарность · 1 из 4',q:'«Внимание экономно: оно перестаёт показывать то, что не меняется. Благодарность — это увидеть заново.»',
+  task:'Не вставая с места, найди глазами одну вещь, которая была рядом всегда, а заметил ты её только сейчас.',
+  opts:['Нашёл — и правда не замечал','Нашёл, но видел её и раньше','Пока ищу'],
+  rep:['Ты остановил взгляд на том, мимо чего ходишь каждый день. С этого и начинается благодарность: с одной замеченной вещи.','Значит, внимание у тебя не спит. Сегодня посмотри на эту вещь так, будто её поставили только что.','Не спеши. Иногда такая вещь находится не глазами, а руками: то, что ты держишь каждый день.']},
+ {card:'Благодарность · 2 из 4',q:'«Спасибо — это хорошо. Но если на нём остановиться, оно становится откупом, чтобы не нести настоящий долг вперёд.»',
+  task:'Вспомни, кто однажды открыл тебе дверь: советом, контактом, словом в нужный момент.',
+  opts:['Вспомнил и знаю, кому передам дальше','Вспомнил и хочу поблагодарить','Пока никто не приходит в голову'],
+  rep:['Ты сразу увидел следующего в цепочке. Одно сообщение этому человеку сегодня — и дверь откроется ещё раз.','Поблагодари, это честный первый шаг. А потом спроси себя, кому сейчас нужна такая же дверь.','Так бывает: помощь часто приходит незаметно. Вспомни последнее, что у тебя получилось, и посмотри, кто стоял рядом.']},
+ {card:'Благодарность · 3 из 4',q:'«Хорошо сделанная работа выглядит так, будто её никто не делал.»',
+  task:'Сделай одно маленькое дело для того, кто придёт после тебя: протри стол, поставь вещь на место. Никому не рассказывай.',
+  opts:['Сделал прямо сейчас','Сделал — и очень хочется рассказать','Сделаю сегодня, уже знаю что'],
+  rep:['Сделал и промолчал. Это редкое умение: вклад, которому не нужны зрители.','Желание рассказать — честное. Заметь его и оставь дело без свидетелей, так оно весит больше.','Хорошо, что уже знаешь что. Выбери самое маленькое, на минуту, и сделай до вечера.']}
+];
+const $=id=>document.getElementById(id), sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const S={light:0,iskra:2150,moves:0,done:0,free:false,xp:0};
+let board=[],busy=false,sel=null,uid=0,hintT=null;
+const grid=$('grid');
+
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,' ')}
+function drawTree(){
+  const l=S.light/100, g=S.done;
+  const br=(x2,y2,t)=>`<path d="M95 ${y2+26} L${x2} ${y2}" stroke="#9ee8dc" stroke-width="2.5" stroke-linecap="round" opacity="${l>t||S.free?1:.18}"/><circle cx="${x2}" cy="${y2}" r="4.500" fill="#e8fff8" opacity="${l>t||S.free?1:.18}"/>`;
+  let extra='';for(let i=0;i<g;i++)extra+=`<circle cx="${62+i*33}" cy="${30-(i%2)*8}" r="3.500" fill="#f0cf86"/>`;
+  $('tree').innerHTML=`<ellipse cx="95" cy="62" rx="${60+l*25}" ry="${44+l*12}" fill="#1f5a55" opacity="${.25+l*.4}"/>
+  <path d="M95 118 L95 40" stroke="#9ee8dc" stroke-width="4" stroke-linecap="round"/>${br(62,62,.2)}${br(128,52,.45)}${br(72,36,.7)}
+  <circle cx="95" cy="32" r="${7+l*6}" fill="#f0cf86"/><circle cx="95" cy="32" r="${14+l*14}" fill="#f0cf86" opacity=".18"/>${extra}`;
+}
+function ui(){
+  $('iskra').textContent=fmt(S.iskra);$('moves').textContent=S.moves;
+  $('meter').style.width=Math.min(100,S.light)+'%';$('meterBox').setAttribute('aria-valuenow',Math.round(Math.min(100,S.light)));
+  [...$('dots').children].forEach((d,i)=>d.classList.toggle('on',i<S.done));
+  $('subL').textContent=S.free?'Мудрости пройдены · сад открыт':`Мудрость ${S.done+1} из 3 · свет ${Math.round(Math.min(100,S.light))}%`;
+  $('mode').textContent=S.free?'Сад · играй сколько хочешь':'Сад · утренний ритуал';
+  drawTree();
+}
+function place(t){t.el.style.transform=`translate(${t.c*100}%,${t.r*100}%)`}
+function mk(type,r,c,startR){
+  const el=document.createElement('div');el.className='tile';el.innerHTML='<span>'+ICON[type]+'</span>';
+  const t={id:++uid,type,r,c,el};el.dataset.id=t.id;
+  el.style.transform=`translate(${c*100}%,${(startR??r)*100}%)`;grid.appendChild(el);return t;
+}
+function typesMatrix(){return board.map(row=>row.map(t=>t?t.type:null))}
+function matchesIn(m){
+  const hit=new Set();
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=m[r][c];if(!v)continue;
+    if(c<N-2&&m[r][c+1]===v&&m[r][c+2]===v){let k=c;while(k<N&&m[r][k]===v){hit.add(r*N+k);k++}}
+    if(r<N-2&&m[r+1][c]===v&&m[r+2][c]===v){let k=r;while(k<N&&m[k][c]===v){hit.add(k*N+c);k++}}}
+  return [...hit];
+}
+function findMove(){
+  const m=typesMatrix();
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++)for(const [dr,dc] of [[0,1],[1,0]]){
+    const r2=r+dr,c2=c+dc;if(r2>=N||c2>=N)continue;
+    [m[r][c],m[r2][c2]]=[m[r2][c2],m[r][c]];const ok=matchesIn(m).length>0;[m[r][c],m[r2][c2]]=[m[r2][c2],m[r][c]];
+    if(ok)return [[r,c],[r2,c2]];}
+  return null;
+}
+function newBoard(){
+  grid.innerHTML='';
+  do{board=[];grid.innerHTML='';
+    for(let r=0;r<N;r++){board.push([]);for(let c=0;c<N;c++){let ty;
+      do{ty=TYPES[Math.random()*4|0]}while((c>1&&board[r][c-1].type===ty&&board[r][c-2].type===ty)||(r>1&&board[r-1][c].type===ty&&board[r-2][c].type===ty));
+      board[r].push(mk(ty,r,c));}}
+  }while(!findMove());
+}
+function clearHint(){clearTimeout(hintT);grid.querySelectorAll('.hint').forEach(e=>e.classList.remove('hint'))}
+function armHint(){clearHint();hintT=setTimeout(()=>{const mv=findMove();if(mv&&!busy)mv.forEach(([r,c])=>board[r][c].el.classList.add('hint'))},6000)}
+function setSel(t){if(sel)sel.el.classList.remove('sel');sel=t;if(t)t.el.classList.add('sel')}
+function swapCells(a,b){board[a.r][a.c]=b;board[b.r][b.c]=a;[a.r,b.r]=[b.r,a.r];[a.c,b.c]=[b.c,a.c];place(a);place(b)}
+
+async function trySwap(a,b){
+  if(busy||!a||!b||Math.abs(a.r-b.r)+Math.abs(a.c-b.c)!==1)return;
+  busy=true;clearHint();setSel(null);swapCells(a,b);await sleep(230);
+  if(!matchesIn(typesMatrix()).length){swapCells(a,b);await sleep(230);$('status').textContent='Так ряд не сложится. Попробуй другой ход.';busy=false;armHint();return}
+  S.moves++;await resolve();busy=false;
+  if(!S.free&&S.light>=100){await sleep(350);openWisdom()}else armHint();
+}
+async function resolve(){
+  let combo=0;
+  for(;;){
+    const hit=matchesIn(typesMatrix());if(!hit.length)break;combo++;
+    const tally={drop:0,leaf:0,sun:0,spark:0};
+    hit.forEach(i=>{const t=board[i/N|0][i%N];tally[t.type]++;t.el.classList.add('pop')});
+    await sleep(200);
+    hit.forEach(i=>{const r=i/N|0,c=i%N;board[r][c].el.remove();board[r][c]=null});
+    let light=tally.sun*2+Math.ceil((tally.drop+tally.leaf)/2), isk=tally.spark*5;
+    if(S.free){isk=tally.spark*10+(tally.sun+tally.drop+tally.leaf)*2;light=0}
+    S.light=Math.min(100,S.light+light);S.iskra+=isk;
+    const parts=[];if(light)parts.push(`<b>+${light}% света</b>`);if(isk)parts.push(`<b>+${isk} ⊙</b>`);if(combo>1)parts.push(`цепочка ×${combo}`);
+    $('status').innerHTML=parts.join(' · ');ui();
+    for(let c=0;c<N;c++){let w=N-1;
+      for(let r=N-1;r>=0;r--){const t=board[r][c];if(t){if(r!==w){board[w][c]=t;board[r][c]=null;t.r=w}w--}}
+      const miss=w+1;for(let r=w;r>=0;r--){board[r][c]=mk(TYPES[Math.random()*4|0],r,c,r-miss)}}
+    grid.offsetHeight;board.flat().forEach(place);await sleep(270);
+  }
+  if(!findMove()){$('status').textContent='Ходов не осталось — ветер перемешал сад.';await sleep(500);newBoard()}
+}
+
+/* ввод: тап по двум соседним клеткам или свайп */
+let down=null;
+function tileAt(e){const el=e.target.closest('.tile');if(!el)return null;return board.flat().find(t=>t&&t.id==el.dataset.id)}
+grid.addEventListener('pointerdown',e=>{if(busy)return;const t=tileAt(e);if(t)down={t,x:e.clientX,y:e.clientY}});
+grid.addEventListener('pointerup',e=>{if(!down||busy){down=null;return}
+  const dx=e.clientX-down.x,dy=e.clientY-down.y,t=down.t;down=null;
+  if(Math.max(Math.abs(dx),Math.abs(dy))>18){const h=Math.abs(dx)>Math.abs(dy);const r=t.r+(h?0:Math.sign(dy)),c=t.c+(h?Math.sign(dx):0);
+    if(r>=0&&r<N&&c>=0&&c<N)trySwap(t,board[r][c]);return}
+  if(sel&&sel!==t&&Math.abs(sel.r-t.r)+Math.abs(sel.c-t.c)===1)trySwap(sel,t);else setSel(sel===t?null:t);clearHint();armHint()});
+grid.addEventListener('pointercancel',()=>down=null);
+
+/* мудрость */
+function sheet(html){const s=document.createElement('div');s.className='sheet';s.innerHTML=html;$('phone').appendChild(s);return s}
+function flower(){let p='';for(let a=0;a<360;a+=45)p+=`<ellipse rx="11" ry="30" fill="#f0cf86" opacity=".75" transform="rotate(${a}) translate(0 -26)"/>`;
+  return `<div class="flower"><svg viewBox="-75 -75 150 150"><circle r="70" fill="#3a2e17" opacity=".6"/>${p}<circle r="15" fill="#fff4d6"/></svg></div>`}
+function openWisdom(){
+  clearHint();const w=WISDOMS[S.done];
+  const s=sheet(`<span class="eyebrow" style="text-align:center">Почка раскрылась</span>${flower()}<h2>Дерево набрало свет</h2>
+   <p class="lead">Внутри — мудрость дня. ${w.card}</p><div class="quote">${w.q}</div><button class="btn" id="toTask">Открыть задание</button>`);
+  s.querySelector('#toTask').onclick=()=>{s.remove();openTask(w)};
+}
+function openTask(w){
+  const s=sheet(`<div class="top"><span class="eyebrow">Мудрость дня</span><span class="bal" style="color:var(--muted);font-weight:400">${S.done+1} из 3</span></div>
+   <div class="quote" style="font-size:16px">${w.q}</div>
+   <div class="task"><span class="eyebrow" style="color:var(--gold)">Задание</span><p>${w.task}</p>${w.opts.map((o,i)=>`<button class="opt" aria-pressed="false" data-i="${i}">${o}</button>`).join('')}</div>
+   <button class="btn" id="ans" disabled>Ответить · Союзник прочитает</button>`);
+  let pick=null;const ans=s.querySelector('#ans');
+  s.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{pick=+b.dataset.i;s.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-pressed',x===b));ans.disabled=false});
+  ans.onclick=()=>{s.remove();openReply(w,pick)};
+}
+function openReply(w,i){
+  S.done++;S.iskra+=100;S.xp+=80;const last=S.done===3;
+  const s=sheet(`<div class="top"><span class="eyebrow">Союзник ответил</span><span class="bal" style="color:var(--muted);font-weight:400">${S.done} из 3</span></div>
+   <div class="reply"><small>СОЮЗНИК</small>${w.rep[i]}</div><p class="reward">+100 ⊙ · +80 опыта</p>
+   <button class="btn" id="go">${last?'Дальше':'Вернуться в сад · мудрость '+(S.done+1)+' из 3'}</button>
+   <p class="note">Прототип: ответы Союзника заготовлены заранее. В игре он отвечает на твой текст.</p>`);
+  s.querySelector('#go').onclick=()=>{s.remove();if(last)openDone();else nextRound()};
+}
+function nextRound(){S.light=0;$('status').textContent='Новая почка. Набери свет для следующей мудрости.';newBoard();ui();armHint()}
+function openDone(){
+  const s=sheet(`<span class="eyebrow" style="text-align:center">День пройден</span>${flower()}<h2>На сегодня всё. Ты молодец</h2>
+   <p class="lead">Все три мудрости раскрыты. Дерево это запомнило.</p>
+   <div class="stats"><div><b>3</b>мудрости</div><div><b>+${S.xp}</b>опыта</div><div><b>${S.moves}</b>ходов</div></div>
+   <p class="lead">Новые мудрости — после полуночи. А сад открыт: играй сколько хочешь, искры в ряд приносят ⊙.</p>
+   <button class="btn" id="free">Остаться в саду</button><button class="btn" id="again" style="background:none;border-color:var(--line);color:var(--muted)">Начать показ заново</button>`);
+  s.querySelector('#free').onclick=()=>{s.remove();S.free=true;S.light=100;$('status').textContent='Сад открыт. Опыт сегодня уже не растёт — только ⊙.';newBoard();ui();armHint()};
+  s.querySelector('#again').onclick=()=>{s.remove();Object.assign(S,{light:0,iskra:2150,moves:0,done:0,free:false,xp:0});$('status').textContent='Собери три в ряд. Солнце даёт дереву больше всего света.';newBoard();ui();armHint()};
+}
+newBoard();ui();armHint();
+</script>
+
+</body>
+</html>
